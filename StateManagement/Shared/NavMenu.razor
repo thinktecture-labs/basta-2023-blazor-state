@@ -1,0 +1,42 @@
+﻿@using StateManagement.Services
+@using StateManagement.State
+
+@inherits FluxorComponent
+@implements IDisposable
+
+<MudNavMenu>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
+    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
+    <MudNavLink Href="parameter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Parameter</MudNavLink>
+    <MudNavLink Href="cascading" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Cascading</MudNavLink>
+    <MudNavLink Href="service" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Service (@ServiceCount)</MudNavLink>
+    <MudNavLink Href="store" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Store (@(CounterState?.Value.Count ?? 0))</MudNavLink>
+    <MudNavLink Href="deeplinking/{cc18ad28-acee-4495-882c-ec4f56f5513b}" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Deep Linking</MudNavLink>
+</MudNavMenu>
+
+@code {
+    [Inject]
+    private StateService? StateService { get; set; }
+
+    [Inject]
+    private IState<CounterState>? CounterState { get; set; }
+
+    private int ServiceCount => StateService?.ForecastAmount ?? 0;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        StateService!.OnChange += StateHasChanged;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            StateService!.OnChange -= StateHasChanged;
+        }
+
+        base.Dispose(disposing);
+    }
+}
